@@ -1,0 +1,29 @@
+narnia1@narnia:/narnia$ cat narnia1.c
+#include <stdio.h>
+
+int main(){
+  int (*ret)();
+
+  if(getenv("EGG")==NULL){
+    printf("Give me something to execute at the env-variable EGG\n");
+    exit(1);
+  }
+
+  printf("Trying to execute EGG!\n");
+  ret = getenv("EGG");
+  ret();
+
+  return 0;
+}
+
+narnia1@narnia:/narnia$ uname -a
+Linux narnia 4.4.0-112-generic #135-Ubuntu SMP Fri Jan 19 11:48:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+narnia1@narnia:/narnia$ lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:  Ubuntu 16.04.3 LTS
+Release:  16.04
+Codename: xenial
+
+narnia1@narnia:/narnia$ file narnia1
+narnia1: setuid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=9e6e2b45e5351a94b313182446f7f08c0dd1a95d, not stripped
